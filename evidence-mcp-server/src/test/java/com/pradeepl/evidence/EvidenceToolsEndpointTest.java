@@ -185,58 +185,8 @@ public class EvidenceToolsEndpointTest {
         assertThat(result).contains("Service Categories");
     }
 
-    @Test
-    @DisplayName("[KNOWLEDGE] Should fetch payment service runbook")
-    public void testPaymentServiceRunbook() {
-        String result = endpoint.getRunbook("payment-service");
-
-        System.out.println("=== PAYMENT SERVICE RUNBOOK ===");
-        System.out.println(result);
-        System.out.println();
-
-        assertThat(result).contains("#");
-        assertThat(result).doesNotContain("Runbook Not Found");
-        assertThat(result).isNotEmpty();
-    }
-
-    @Test
-    @DisplayName("[KNOWLEDGE] Should fetch checkout service runbook")
-    public void testCheckoutServiceRunbook() {
-        String result = endpoint.getRunbook("checkout-service");
-
-        System.out.println("=== CHECKOUT SERVICE RUNBOOK ===");
-        System.out.println(result);
-        System.out.println();
-
-        assertThat(result).contains("#");
-        assertThat(result).doesNotContain("Runbook Not Found");
-    }
-
-    @Test
-    @DisplayName("[KNOWLEDGE] Should fetch auth service runbook")
-    public void testAuthServiceRunbook() {
-        String result = endpoint.getRunbook("auth-service");
-
-        System.out.println("=== AUTH SERVICE RUNBOOK ===");
-        System.out.println(result);
-        System.out.println();
-
-        assertThat(result).contains("#");
-        assertThat(result).doesNotContain("Runbook Not Found");
-    }
-
-    @Test
-    @DisplayName("[KNOWLEDGE] Should handle non-existent runbook gracefully")
-    public void testNonExistentRunbook() {
-        String result = endpoint.getRunbook("non-existent-service");
-
-        System.out.println("=== NON-EXISTENT RUNBOOK TEST ===");
-        System.out.println(result);
-        System.out.println();
-
-        assertThat(result).contains("Runbook Not Found");
-        assertThat(result).contains("non-existent-service");
-    }
+    // NOTE: Runbook tests removed - runbooks are now in knowledge-base-mcp-server
+    // EvidenceToolsEndpoint only provides logs, metrics, and services list
 
     // ==================== ANALYSIS TOOLS TESTS ====================
 
