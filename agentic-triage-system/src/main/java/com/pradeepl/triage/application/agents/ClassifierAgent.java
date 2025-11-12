@@ -105,7 +105,7 @@ public class ClassifierAgent extends Agent {
                 )
                 .memory(MemoryProvider.limitedWindow())
                 .mcpTools(
-                        RemoteMcpTools.fromService("evidence-tools")
+                        RemoteMcpTools.fromService("evidence-mcp-server")
                                 .withAllowedToolNames("get_known_services")
                 )
                 .systemMessage(SYSTEM)
