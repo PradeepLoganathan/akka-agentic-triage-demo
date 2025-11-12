@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akka AI Agent Triage Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Akka AI Agent Triage System</h1>
+            <p>Intelligent Multi-Agent Incident Response Workflow</p>
+            <div class="toolbar">
+                <a href="/" class="btn-secondary active">🚀 Workflow</a>
+                <a href="/dashboard.html" class="btn-secondary">📊 Incident Dashboard</a>
+                <a href="/evaluations.html" class="btn-secondary">🔍 Evaluation Metrics</a>
+                <button class="btn-secondary" id="themeToggle">🌗 Toggle Theme</button>
+                <button class="btn-secondary" id="restartBtn">🔄 Restart</button>
+                <button class="btn-secondary" id="exportTopBtn">📄 Export</button>
+            </div>
+        </div>
+
+        <!-- Workflow Content -->
+        <div class="workflow-content">
+            <div class="main-content">
+                <div class="input-section">
+                <div class="demo-scenarios">
+                    <h3>Demo Scenarios</h3>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="scenarioSelect" onchange="handleScenarioChange()" style="flex: 1; padding: 10px; font-size: 14px; border: 1px solid #ddd; border-radius: 5px; background: white; cursor: pointer;">
+                            <option value="">Select a demo scenario...</option>
+                            <optgroup label="Real Incident Scenarios">
+                                <option value="payment-outage">Payment Service Outage (P1)</option>
+                                <option value="database-slow">Database Performance Degradation (P2)</option>
+                                <option value="auth-errors">Authentication Service Errors (P2)</option>
+                                <option value="deployment-issue">Post-Deployment Issues (P3)</option>
+                            </optgroup>
+                            <optgroup label="Guardrail Tests">
+                                <option value="toxic-test">🛡️ Profanity Guard Test</option>
+                                <option value="prompt-injection">🛡️ Prompt Injection Test #1 (Ignore Instructions)</option>
+                                <option value="prompt-injection-override">🛡️ Prompt Injection Test #2 (System Override)</option>
+                                <option value="prompt-injection-role">🛡️ Prompt Injection Test #3 (Role Manipulation)</option>
+                                <option value="data-leakage-aws">🛡️ Data Leakage Test - AWS Keys</option>
+                                <option value="data-leakage-api">🛡️ Data Leakage Test - API Keys</option>
+                                <option value="data-leakage-db">🛡️ Data Leakage Test - Database Password</option>
+                                <option value="data-leakage-keys">🛡️ Data Leakage Test - Private Key</option>
+                                <option value="data-leakage-jwt">🛡️ Data Leakage Test - JWT Token</option>
+                            </optgroup>
+                        </select>
+                        <button class="btn-secondary" onclick="loadSelectedScenario()" style="white-space: nowrap;">Load Scenario</button>
+                    </div>
+                </div>
+
+                <form id="triageForm">
+                    <div class="form-group">
+                        <label for="triageId">Triage ID:</label>
+                        <input type="text" id="triageId" value="" placeholder="auto-generated">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incident">Incident Description:</label>
+                        <textarea id="incident" placeholder="Describe the incident in detail..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="startBtn">
+                        Start Triage Workflow
+                    </button>
+                </form>
+
+                <div class="demo-scenarios" style="margin-top:15px;">
+                    <h3>Memory/State Demo</h3>
+                    <div style="display:flex; gap:10px; flex-wrap: wrap; margin-top:8px;">
+                        <button class="scenario-btn" onclick="growContext(5)">Add 5 demo notes</button>
+                        <button class="scenario-btn" onclick="growContext(10)">Add 10 demo notes</button>
+                        <button class="scenario-btn" onclick="updateDetailedState()">Refresh State Panel</button>
+                    </div>
+                    <div style="font-size:12px; color:#555; margin-top:6px;">
+                        Tracks Session, Context Entries, State Size, and Heap Used.
+                    </div>
+                </div>
+
+                <div class="metrics" id="metricsPanel">
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalTime">0s</div>
+                        <div class="metric-label">Total Time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="completedSteps">0/7</div>
+                        <div class="metric-label">Completed Steps</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="currentSeverity">-</div>
+                        <div class="metric-label">Severity</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="contextEntries">0</div>
+                        <div class="metric-label">Context Entries</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="stateSize">0</div>
+                        <div class="metric-label">State Size (chars)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="heapUsed">0 MB</div>
+                        <div class="metric-label">Heap Used</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="sessionIdShort">-</div>
+                        <div class="metric-label">Session</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-section">
+                <div class="workflow-progress" id="workflowProgress">
+                    <div class="step" data-step="classify">
+                        <div class="step-icon">🧭</div>
+                        <div class="step-title">Classify</div>
+                        <div class="step-desc">Analyze & categorize incident</div>
+                    </div>
+                    <div class="step" data-step="evidence">
+                        <div class="step-icon">📊</div>
+                        <div class="step-title">Evidence</div>
+                        <div class="step-desc">Gather logs & metrics</div>
+                    </div>
+                    <div class="step" data-step="triage">
+                        <div class="step-icon">🔬</div>
+                        <div class="step-title">Triage</div>
+                        <div class="step-desc">Root cause analysis</div>
+                    </div>
+                    <div class="step" data-step="knowledge">
+                        <div class="step-icon">🧠</div>
+                        <div class="step-title">Knowledge</div>
+                        <div class="step-desc">Search runbooks & docs</div>
+                    </div>
+                    <div class="step" data-step="remediate">
+                        <div class="step-icon">🛠️</div>
+                        <div class="step-title">Remediate</div>
+                        <div class="step-desc">Plan solutions</div>
+                    </div>
+                    <div class="step" data-step="summarize">
+                        <div class="step-icon">📝</div>
+                        <div class="step-title">Summarize</div>
+                        <div class="step-desc">Create communications</div>
+                    </div>
+                    <div class="step" data-step="complete">
+                        <div class="step-icon">✅</div>
+                        <div class="step-title">Complete</div>
+                        <div class="step-desc">Workflow finished</div>
+                    </div>
+                </div>
+
+                <div class="conversation-timeline" id="conversationTimeline" style="display: none;">
+                    <h3>📋 Conversation Timeline</h3>
+                    <div class="timeline-content" id="timelineContent"></div>
+                    <button class="btn-primary" onclick="exportResults()" id="exportBtn" style="display: none; margin-top: 15px;">
+                        📄 Export Results
+                    </button>
+                </div>
+
+                <div class="agent-cards" id="agentCards">
+                    <div class="agent-card" id="classifier-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Classifier Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="classifier-input">Waiting for workflow to start...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="classifier-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card" id="evidence-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Evidence Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="evidence-input">Waiting for classification...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="evidence-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card" id="triage-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Triage Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="triage-input">Waiting for evidence...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="triage-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card" id="knowledge-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Knowledge Base Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="knowledge-input">Waiting for triage...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="knowledge-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card" id="remediation-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Remediation Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="remediation-input">Waiting for triage...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="remediation-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card" id="summary-card">
+                        <div class="agent-header">
+                            <div class="agent-name">Summary Agent</div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="agent-status">Waiting...</div>
+                                <button class="collapse-btn" title="Collapse/Expand">▾</button>
+                            </div>
+                        </div>
+                        <div class="agent-content">
+                            <div class="input-output">
+                                <h4>Input:</h4>
+                                <div class="code-block" id="summary-input">Waiting for remediation...</div>
+                            </div>
+                            <div class="input-output">
+                                <h4>Output:</h4>
+                                <div class="code-block" id="summary-output">No output yet</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
