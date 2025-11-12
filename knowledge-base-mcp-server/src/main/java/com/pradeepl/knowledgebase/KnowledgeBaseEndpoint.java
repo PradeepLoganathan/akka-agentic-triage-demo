@@ -1,8 +1,10 @@
 package com.pradeepl.knowledgebase;
 
 import akka.javasdk.annotations.Acl;
+import akka.javasdk.annotations.Description;
 import akka.javasdk.annotations.mcp.McpEndpoint;
-import akka.javasdk.annotations.mcp.McpResource;
+import akka.javasdk.annotations.mcp.McpTool;
+import akka.javasdk.annotations.mcp.ToolAnnotation;
 import akka.javasdk.mcp.AbstractMcpEndpoint;
 
 import com.pradeepl.knowledgebase.util.McpLogger;
@@ -34,20 +36,25 @@ public class KnowledgeBaseEndpoint extends AbstractMcpEndpoint {
 
     private static final Logger logger = LoggerFactory.getLogger(KnowledgeBaseEndpoint.class);
 
-    // ==================== KNOWLEDGE BASE RESOURCES ====================
-    // Resources for accessing service documentation and runbooks
+    // ==================== KNOWLEDGE BASE TOOLS ====================
+    // Tools for accessing service documentation and runbooks
+    // Note: Using @McpTool instead of @McpResource as resources are not yet supported in Akka SDK 3.5.6
 
-    @McpResource(
-        uriTemplate = "kb://runbooks/{serviceName}",
-        name = "Service Runbook",
-        description = "Get troubleshooting runbook for a specific service. Contains escalation contacts and procedures. May contain PII for guardrail demonstration.",
-        mimeType = "text/markdown"
+    @McpTool(
+        name = "get_runbook",
+        description = "Get troubleshooting runbook for a specific service. Contains escalation contacts and procedures. May contain PII for guardrail demonstration. Returns runbook in markdown format.",
+        annotations = {
+            ToolAnnotation.ReadOnly,
+            ToolAnnotation.NonDestructive,
+            ToolAnnotation.Idempotent,
+            ToolAnnotation.ClosedWorld
+        }
     )
-    public String getRunbook(String serviceName) {
-        // Log the incoming MCP resource access
+    public String getRunbook(@Description("Service name (e.g., payment-service, checkout-service, auth-service)") String serviceName) {
+        // Log the incoming MCP tool call
         McpLogger.logResourceAccess("kb://runbooks/" + serviceName, "Service Runbook", serviceName);
 
-        logger.info("📚 MCP Resource: getRunbook called - Service: {}", serviceName);
+        logger.info("📚 MCP Tool: get_runbook called - Service: {}", serviceName);
 
         try {
             String path = String.format("knowledge_base/%s-runbook.md", serviceName);
