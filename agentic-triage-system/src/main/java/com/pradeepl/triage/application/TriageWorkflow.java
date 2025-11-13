@@ -166,6 +166,8 @@ public class TriageWorkflow extends Workflow<TriageState> {
                 .defaultStepRecovery(maxRetries(1).failoverTo(TriageWorkflow::interruptStep))
                 // If evidence gathering fails, continue with triage using whatever context is available
                 .stepRecovery(TriageWorkflow::gatherEvidenceStep, maxRetries(1).failoverTo(TriageWorkflow::triageStep))
+                // If knowledge base access fails (e.g., due to PII guardrails), skip to remediation with fallback message
+                .stepRecovery(TriageWorkflow::queryKnowledgeBaseStep, maxRetries(0).failoverTo(TriageWorkflow::knowledgeBaseFailoverStep))
                 // If remediation plan fails, still produce summaries from available context
                 .stepRecovery(TriageWorkflow::remediateStep, maxRetries(1).failoverTo(TriageWorkflow::summarizeStep))
                 .build();
@@ -272,6 +274,22 @@ public class TriageWorkflow extends Workflow<TriageState> {
                 .updateState(currentState()
                         .withKnowledgeBaseResult(knowledgeBaseResult)
                         .addConversation(new Conversation("assistant", "Knowledge base search completed."))
+                        .withStatus(TriageState.Status.KNOWLEDGE_BASE_SEARCHED))
+                .thenTransitionTo(TriageWorkflow::remediateStep);
+    }
+
+    @StepName("knowledge_base_failover")
+    private StepEffect knowledgeBaseFailoverStep() {
+        logger.warn("⚠️ KNOWLEDGE BASE ACCESS BLOCKED - Continuing with remediation (likely due to PII guardrails)");
+        String fallbackMessage = "# Knowledge Base Access Unavailable\n\n" +
+                "Access to service runbooks was blocked by security guardrails (PII detection). " +
+                "Proceeding with remediation based on available evidence and classification data only.";
+        String conversationEntry = String.format("[%s] Knowledge base access blocked by security policy - continuing with available context",
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME));
+        return stepEffects()
+                .updateState(currentState()
+                        .withKnowledgeBaseResult(fallbackMessage)
+                        .addConversation(new Conversation("system", conversationEntry))
                         .withStatus(TriageState.Status.KNOWLEDGE_BASE_SEARCHED))
                 .thenTransitionTo(TriageWorkflow::remediateStep);
     }
