@@ -1,0 +1,30 @@
+2025-01-15 16:30:00.001 INFO  [inventory-service] Service startup complete. Version=v1.8.1 cache-enabled=true
+2025-01-15 16:31:15.234 INFO  [inventory-service] Stock level query: sku=WIDGET-42 warehouse=west-dc quantity=1247 cache=HIT
+2025-01-15 16:32:20.456 INFO  [inventory-service] Inventory sync started: warehouse=east-dc items=5432 estimated-duration=45s
+2025-01-15 16:33:10.789 WARN  [inventory-service] Cache invalidation lag detected: sku=GADGET-88 delay=2300ms source=kafka-consumer
+2025-01-15 16:34:05.012 ERROR [inventory-service] Stock level mismatch: sku=DEVICE-123 cached=50 actual=48 drift=2units
+2025-01-15 16:35:30.345 INFO  [inventory-service] Reserved inventory: sku=PRODUCT-999 quantity=10 reservation-id=rsv-abc-123 ttl=300s
+2025-01-15 16:36:45.678 WARN  [inventory-service] High cache miss rate: period=5m miss-rate=23.4% expected=below-5%
+2025-01-15 16:37:12.901 ERROR [inventory-service] Database connection pool exhausted: active=50 max=50 waiting=12 timeout=5000ms
+2025-01-15 16:38:20.234 INFO  [inventory-service] Inventory adjustment: sku=ITEM-567 old=200 new=195 reason=damage-report adj-id=adj-789
+2025-01-15 16:39:05.567 WARN  [inventory-service] Slow query detected: sku-search warehouse=central-dc duration=3450ms threshold=1000ms
+2025-01-15 16:40:30.890 ERROR [inventory-service] Kafka consumer lag increasing: topic=inventory-updates lag=8934 messages consumer-group=inv-sync
+2025-01-15 16:41:15.123 INFO  [inventory-service] Low stock alert: sku=COMPONENT-44 current=8 threshold=10 reorder-triggered=true
+2025-01-15 16:42:45.456 ERROR [inventory-service] Stock reservation failed: sku=LIMITED-EDITION reason=insufficient-quantity requested=5 available=3
+2025-01-15 16:43:20.789 WARN  [inventory-service] Cache eviction rate high: evicted=450items period=1m memory-pressure=true heap-usage=87%
+2025-01-15 16:44:10.012 INFO  [inventory-service] Batch update completed: warehouse=north-dc items-updated=892 duration=4.2s errors=0
+2025-01-15 16:45:05.345 ERROR [inventory-service] SKU lookup timeout: sku=PRODUCT-321 warehouse=south-dc timeout-after=5000ms retry=3/3
+2025-01-15 16:46:30.678 INFO  [inventory-service] Cache warming initiated: warehouse=all-locations estimated-items=12000 eta=2m
+2025-01-15 16:47:12.901 WARN  [inventory-service] Replication lag detected: primary=east-dc replica=west-dc lag=15s consistency=eventual
+2025-01-15 16:48:20.234 ERROR [inventory-service] Inventory sync job failed: warehouse=central-dc error=connection-timeout retry-scheduled=60s
+2025-01-15 16:49:05.567 INFO  [inventory-service] Stock reconciliation: warehouse=east-dc discrepancies=23 auto-corrected=18 manual-review=5
+2025-01-15 16:50:30.890 WARN  [inventory-service] High volume of stock queries: rate=850qps threshold=500qps autoscale-triggered=true
+2025-01-15 16:51:15.123 INFO  [inventory-service] Feature flag updated: enable-real-time-sync=true rollout-percentage=50
+2025-01-15 16:52:45.456 ERROR [inventory-service] Warehouse unavailable: warehouse=south-dc health-check=failed fallback=read-from-cache
+2025-01-15 16:53:20.789 INFO  [inventory-service] Reservation expired: reservation-id=rsv-xyz-456 sku=ITEM-789 released-quantity=5
+2025-01-15 16:54:10.012 WARN  [inventory-service] Circuit breaker opened: downstream=warehouse-api failures=15/20 timeout=30s
+2025-01-15 16:55:05.345 INFO  [inventory-service] Daily inventory snapshot: total-skus=45230 total-units=8932445 warehouses=6 status=complete
+2025-01-15 16:56:30.678 ERROR [inventory-service] Negative stock detected: sku=ERROR-PRODUCT quantity=-3 warehouse=test-dc investigation=triggered
+2025-01-15 16:57:12.901 INFO  [inventory-service] Performance metrics: avg-query-time=45ms p95=210ms p99=890ms cache-hit-rate=76%
+2025-01-15 16:58:20.234 WARN  [inventory-service] Schema migration pending: version=current-v1.8.1 target=v1.8.2 downtime-required=false
+2025-01-15 16:59:05.567 INFO  [inventory-service] Health check: status=healthy db-connections=38/50 cache-size=234MB memory=2.1GB

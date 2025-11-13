@@ -80,6 +80,31 @@ Monitoring:
 - Performance metrics within normal ranges
 - Feature flags available for rollback`
             },
+            'gateway-cascade': {
+                name: 'API Gateway Cascade Failure (P1)',
+                description: `API Gateway experiencing cascading failures across all availability zones since 09:45 UTC. Services are returning HTTP 429 (Too Many Requests) followed by 503 (Service Unavailable) errors. Customer-facing applications completely unavailable.
+
+Technical Details:
+- Rate limiter threshold exceeded on gateway-primary cluster
+- Circuit breakers tripped on checkout, inventory, and user services
+- Request queue depth at maximum capacity (10000 requests)
+- Connection pool exhaustion on backend services
+- Auto-scaling triggered but new instances failing health checks
+- Recent configuration change to rate limit from 1000 to 500 requests/second at 09:30 UTC
+
+Metrics Observed:
+- Error rate jumped from 0.1% to 87% at 09:45 UTC
+- Average response time increased from 120ms to 8500ms
+- Active connections spiked from 500 to 12000
+- CPU utilization normal at 35% across all instances
+- Memory usage stable at 2.5GB per instance
+
+Business Impact:
+- Zero successful transactions since 09:45 UTC
+- Estimated revenue loss of $75K per hour
+- 1200+ customer support tickets opened
+- Social media sentiment turning negative rapidly`
+            },
             'toxic-test': {
                 name: '🛡️ Profanity Guard Test',
                 description: `The stupid system is down and it's complete shit. This damn service keeps failing and it's a total mess.`

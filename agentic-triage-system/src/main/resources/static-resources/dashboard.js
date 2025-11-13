@@ -64,8 +64,8 @@ function renderIncidentStats(stats) {
             <div class="stat-label">Escalations</div>
         </div>
         <div class="stat-card success">
-            <div class="stat-value">${stats.averageProgress.toFixed(1)}</div>
-            <div class="stat-label">Avg Progress</div>
+            <div class="stat-value">${stats.averageProgress.toFixed(0)}%</div>
+            <div class="stat-label">Avg Progress %</div>
         </div>
     `;
     const element = document.getElementById('incident-stats');

@@ -162,10 +162,10 @@ public class IncidentDashboardEndpoint {
             long totalIncidents = incidents.size();
             long activeIncidents = incidents.stream().filter(i -> i.isActive()).count();
             long p1Count = incidents.stream()
-                .filter(i -> "P1".equalsIgnoreCase(i.severity()) && i.isActive())
+                .filter(i -> "P1".equalsIgnoreCase(i.severity()))
                 .count();
             long p2Count = incidents.stream()
-                .filter(i -> "P2".equalsIgnoreCase(i.severity()) && i.isActive())
+                .filter(i -> "P2".equalsIgnoreCase(i.severity()))
                 .count();
             long escalationCount = incidents.stream()
                 .filter(i -> i.requiresEscalation() && i.isActive())
@@ -176,7 +176,7 @@ public class IncidentDashboardEndpoint {
                     .filter(i -> i.isActive())
                     .mapToInt(i -> i.stepProgress())
                     .average()
-                    .orElse(0.0);
+                    .orElse(0.0) * 100.0 / 7.0; // Convert to percentage (7 steps total)
 
             var stats = new DashboardStats(
                 totalIncidents,
