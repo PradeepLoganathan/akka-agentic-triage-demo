@@ -44,6 +44,40 @@ This project demonstrates the **art of possible with Akka for agentic AI** by sh
 └──────────────────┘  └──────────────────┘
 ```
 
+#### Architecture Diagram (Mermaid)
+
+```mermaid
+flowchart LR
+  ATS["Agentic Triage System"]
+  EVS["Evidence MCP Server"]
+  KBS["Knowledge Base MCP Server"]
+
+  subgraph Agents[Agents & Workflows]
+    direction TB
+    EA["Evidence Agent"]
+    KA["Knowledge Base Agent"]
+    TW["Triage Workflow"]
+  end
+
+  ATS -->|"consumes MCP"| EVS
+  ATS -->|"consumes MCP"| KBS
+  TW --> EA
+  TW --> KA
+  EA -->|"calls tools"| EVS
+  KA -->|"fetches resources"| KBS
+
+  EVS -->|"exposes tools"| Tools["Tools"]
+  KBS -->|"exposes resources"| Resources["Resources (runbooks, docs)"]
+  Tools -->|"MCP calls"| EA
+  Resources -->|"MCP fetch"| KA
+
+  classDef svc fill:#d3d3d3,stroke:#2b2b2b,stroke-width:1px,color:#000;
+  classDef app fill:#cfe3f2,stroke:#2b2b2b,stroke-width:1px,color:#000;
+  class ATS,EVS,KBS,Tools,Resources svc;
+  class EA,KA,TW app;
+```
+
+
 ### System Components
 
 | Component | Port | Purpose | MCP Type | Technology |

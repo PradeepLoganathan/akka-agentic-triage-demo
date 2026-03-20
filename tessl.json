@@ -1,0 +1,32 @@
+{
+  "name": "project",
+  "dependencies": {
+    "tessl/maven-org-junit-jupiter--junit-jupiter": {
+      "version": "5.12.0"
+    },
+    "tessl/maven-org-assertj--assertj-core": {
+      "version": "3.27.0"
+    },
+    "pradeepl-wkspc/git-branch-workflow": {
+      "source": "file:tiles/git-branch-workflow"
+    },
+    "pradeepl-wkspc/test-skill": {
+      "source": "file:tiles/test-skill"
+    },
+    "tessl/maven-com-typesafe-akka--akka-actor-2-13": {
+      "version": "2.8.0"
+    },
+    "pradeepl-wkspc/code-review": {
+      "source": "file:tiles/code-review"
+    },
+    "pradeepl-wkspc/conventional-commits": {
+      "source": "file:tiles/conventional-commits"
+    },
+    "pradeepl-wkspc/pr-template": {
+      "source": "file:tiles/pr-template"
+    },
+    "pradeepl-wkspc/test-scaffold": {
+      "source": "file:tiles/test-scaffold"
+    }
+  }
+}
